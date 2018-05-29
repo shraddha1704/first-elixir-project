@@ -1,4 +1,15 @@
 defmodule Firstelixir.Handler do
+
+  @moduledoc """
+  Handles HTTP request
+  """
+
+  @doc """
+  Transforms a request into response
+  """
+
+  @pagesPath Path.expand("../../pages", __DIR__)
+
   def handle(request) do
     request
     |> parse
@@ -59,11 +70,10 @@ defmodule Firstelixir.Handler do
   end
 
   def route(%{ method: "GET", path: "/about"} = conv) do
-    file =
-      Path.expand("../../pages", __DIR__)
-      |> Path.join("about.html")
-      |> File.read
-      |> handleFile(conv)
+    @pagesPath
+    |> Path.join("about.html")
+    |> File.read
+    |> handleFile(conv)
   end
 
   def route(%{path: path} = conv) do
