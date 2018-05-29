@@ -10,6 +10,9 @@ defmodule Firstelixir.Handler do
 
   @pagesPath Path.expand("../../pages", __DIR__)
 
+  import Firstelixir.Plugins, only: [rewrite_path: 1, log: 1, track: 1]
+  import Firstelixir.Parser, only: [parse: 1]
+
   def handle(request) do
     request
     |> parse
@@ -19,43 +22,6 @@ defmodule Firstelixir.Handler do
     |> track
     |> format_response
   end
-
-  def track(%{status: 404, path: path} = conv) do
-    IO.puts "Warning: #{path} is on the loose!"
-    conv
-  end
-
-  def track(conv) do
-    conv
-  end
-
-  def rewrite_path(%{ path: "/wildlife"} = conv) do
-    %{ conv | path: "/wildthings"}
-  end
-
-  def rewrite_path(conv) do
-    conv
-  end
-
-  def log(conv) do
-    IO.inspect conv
-  end
-
-  def parse(request) do
-    [method, path, _] = request
-    |> String.split("\n")
-    |> List.first
-    |> String.split(" ")
-    %{ method: method,
-       path: path,
-       resp_body: "",
-       status: nil
-      }
-  end
-
-  # def route(conv) do
-  #   route(conv, conv.method, conv.path)
-  # end
 
   def route(%{ method: "GET", path: "/wildthings"} = conv) do
     %{ conv | status: 200, resp_body: "Bears, Lions, Tigers"}
