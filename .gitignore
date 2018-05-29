@@ -21,5 +21,7 @@ erl_crash.dump
 
 # Ignore package tarball (built via "mix hex.build").
 firstelixir-*.tar
+
+.elixir_ls
 .elixir_ls/
 

@@ -12,7 +12,11 @@ defmodule Firstelixir.Handler do
 
   def parse(request) do
     # TODO: Parse the request string into key-value pair/ map
-    conv = %{ mathod: "GET", path: "/wildthings", resp_body: ""}
+    [method, path, _] = request
+    |> String.split("\n")
+    |> List.first
+    |> String.split(" ")
+    %{ mathod: method, path: path, resp_body: ""}
   end
 
   def route(request) do
