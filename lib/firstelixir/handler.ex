@@ -4,9 +4,6 @@ defmodule Firstelixir.Handler do
   Handles HTTP request
   """
 
-  @doc """
-  Transforms a request into response
-  """
 
   @pagesPath Path.expand("../../pages", __DIR__)
 
@@ -15,6 +12,9 @@ defmodule Firstelixir.Handler do
 
   alias Firstelixir.Conv
 
+  @doc """
+  Transforms a request into response
+  """
   def handle(request) do
     request
     |> parse
@@ -35,6 +35,11 @@ defmodule Firstelixir.Handler do
 
   def route(%Conv{ method: "GET", path: "/bears/"<>id} = conv) do
     %{ conv | status: 200, resp_body: "Bear #{id}"}
+  end
+
+  def route(%Conv{ method: "POST", path: "/bears"} = conv) do
+    %{ conv | status: 201,
+              resp_body: "Created a #{conv.params["type"]} bear named #{conv.params["name"]}!"}
   end
 
   def route(%Conv{ method: "GET", path: "/about"} = conv) do
@@ -137,3 +142,16 @@ Accept: */*
 
 response = Firstelixir.Handler.handle(request)
 IO.puts response
+
+request = """
+POST /bears HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+Content-Type: application/x-www-form-urlencoded
+
+name=Baloo&type=Brown
+"""
+response = Firstelixir.Handler.handle(request)
+IO.puts response
+
