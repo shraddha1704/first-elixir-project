@@ -13,6 +13,8 @@ defmodule Firstelixir.Handler do
   import Firstelixir.Plugins, only: [rewrite_path: 1, log: 1, track: 1]
   import Firstelixir.Parser, only: [parse: 1]
 
+  alias Firstelixir.Conv
+
   def handle(request) do
     request
     |> parse
@@ -23,26 +25,26 @@ defmodule Firstelixir.Handler do
     |> format_response
   end
 
-  def route(%{ method: "GET", path: "/wildthings"} = conv) do
+  def route(%Conv{ method: "GET", path: "/wildthings"} = conv) do
     %{ conv | status: 200, resp_body: "Bears, Lions, Tigers"}
   end
 
-  def route(%{ method: "GET", path: "/bears"} = conv) do
+  def route(%Conv{ method: "GET", path: "/bears"} = conv) do
     %{ conv | status: 200, resp_body: "Bear1, Bear2, Bear3"}
   end
 
-  def route(%{ method: "GET", path: "/bears/"<>id} = conv) do
+  def route(%Conv{ method: "GET", path: "/bears/"<>id} = conv) do
     %{ conv | status: 200, resp_body: "Bear #{id}"}
   end
 
-  def route(%{ method: "GET", path: "/about"} = conv) do
+  def route(%Conv{ method: "GET", path: "/about"} = conv) do
     @pagesPath
     |> Path.join("about.html")
     |> File.read
     |> handleFile(conv)
   end
 
-  def route(%{path: path} = conv) do
+  def route(%Conv{path: path} = conv) do
     %{ conv | status: 404, resp_body: "No #{path} here!" }
   end
 
@@ -58,9 +60,9 @@ defmodule Firstelixir.Handler do
     %{ conv | status: 500, resp_body: "File error: #{reason}"}
   end
 
-  def format_response(conv) do
+  def format_response(%Conv{} = conv) do
     """
-    HTTP/1.1 #{conv.status} #{status_reason(conv.status)}
+    HTTP/1.1 #{Conv.fullStatus(conv)}
     Content-Type: text/html
     Content-Length: #{String.length(conv.resp_body)}
 
@@ -68,16 +70,6 @@ defmodule Firstelixir.Handler do
     """
   end
 
-  defp status_reason(code) do
-    %{
-      200 => "OK",
-      201 => "Created",
-      401 => "Unauthorized",
-      403 => "Forbidden",
-      404 => "Not Found",
-      500 => "Internal Server Error"
-    }[code]
-  end
 end
 
 request = """
