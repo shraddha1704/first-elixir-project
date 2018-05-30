@@ -1,9 +1,10 @@
 defmodule Firstelixir.Conv do
   defstruct method: "",
             path: "",
+            params: %{},
+            headers: %{},
             resp_body: "",
-            status: nil,
-            params: {}
+            status: nil
 
   def fullStatus(conv) do
     "#{conv.status} #{status_reason(conv.status)}"
